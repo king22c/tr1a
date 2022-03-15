@@ -10,14 +10,22 @@ else:
     raise Exception("Not supported platform")
 
 
-def convert_to_pdf(input_docx, out_dir):
-    print('Converting "%s" to PDF' % input_docx)
+def convert_to_pdf(input_docx):
+    out_dir = f'{os.path.dirname(input_docx)}/PDF'
+    check_create_dir(out_dir)
+    print('Converting "%s" to "%s"' % (input_docx, out_dir))
     p = Popen([LIBRE_OFFICE, '--headless', '--convert-to', 'pdf', '--outdir', out_dir, input_docx])
     p.communicate()
 
 
-def is_doc(filename: str):
-    return filename.endswith('.doc') or filename.endswith('.docx')
+def is_doc(fn_: str):
+    return fn_.endswith('.doc') or fn_.endswith('.docx')
+
+
+def check_create_dir(dir_: str):
+    if os.path.exists(dir_) is False:
+        os.mkdir(dir_)
+    return True
 
 
 if __name__ == '__main__':
@@ -25,13 +33,8 @@ if __name__ == '__main__':
     if os.path.exists(input_dir) is False:
         print('Input directory %s is not existed' % input_dir)
         exit(1)
-    output_dir = f'{input_dir}/PDF'
-    if os.path.exists(output_dir) is False:
-        os.mkdir(output_dir)
-    count = 0
-    for file in os.listdir(input_dir):
-        filename = f'{input_dir}/{file}'
-        if os.path.isfile(filename) and is_doc(file):
-            convert_to_pdf(filename, output_dir)
-            count = count + 1
-    print('Converted %d files to PDF' % count)
+    for root, _dirs, files in os.walk(input_dir):
+        for file in files:
+            filename = f'{root}/{file}'
+            if os.path.isfile(filename) and is_doc(file):
+                convert_to_pdf(filename)
