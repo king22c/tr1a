@@ -1,7 +1,7 @@
 import time
 import requests
 
-PROXY = 'socks5://apk-ptype-socks5-phost-130.44.202.149-pport-1080:vFkzuhNn@173.208.183.42:22225'
+PROXY = ''
 PROXIES = {
     'http': PROXY,
     'https': PROXY
